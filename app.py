@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Ustawienia strony dla urządzeń mobilnych (iOS/Android)
+# Ustawienia strony dla urządzeń mobilnych
 st.set_page_config(
     page_title="MaksStandard",
     page_icon="🍔",
@@ -11,6 +11,9 @@ st.set_page_config(
 # --- STYLIZACJA I ANIMOWANE TŁO (Szybki deszcz jedzenia + własna ikona iOS) ---
 st.markdown("""
 <head>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MaksStandard">
     <link rel="apple-touch-icon" href="https://img.icons8.com/emoji/192/hamburger-emoji.png">
     <link rel="apple-touch-icon" sizes="152x152" href="https://img.icons8.com/emoji/152/hamburger-emoji.png">
     <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/emoji/180/hamburger-emoji.png">
@@ -24,22 +27,22 @@ st.markdown("""
         overflow: hidden;
     }
     
-    /* Animacja deszczu jedzenia */
+    /* Animacja deszczu jedzenia - startuje natychmiast z góry ekranu */
     @keyframes foodRain {
-        0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-        10% { opacity: 0.8; }
-        90% { opacity: 0.8; }
-        100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
+        5% { opacity: 0.8; }
+        95% { opacity: 0.8; }
+        100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
     
     .food-particle {
         position: fixed;
-        top: -10%;
-        font-size: 24px;
+        top: -15%;
+        font-size: 26px;
         user-select: none;
         pointer-events: none;
-        animation: foodRain 10s linear infinite;
-        animation-fill-mode: backwards; /* Startuje od pierwszej klatki natychmiast */
+        animation: foodRain 9s linear infinite;
+        animation-fill-mode: backwards;
         z-index: 0;
     }
     
@@ -55,16 +58,16 @@ st.markdown("""
     }
 </style>
 
-<div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 8s;">🍔</div>
-<div class="food-particle" style="left: 15%; animation-delay: 2s; animation-duration: 11s;">🍽️</div>
-<div class="food-particle" style="left: 25%; animation-delay: 0.5s; animation-duration: 12s;">🍣</div>
-<div class="food-particle" style="left: 35%; animation-delay: 4s; animation-duration: 9s;">🥤</div>
-<div class="food-particle" style="left: 45%; animation-delay: 0s; animation-duration: 10s;">🥪</div>
-<div class="food-particle" style="left: 55%; animation-delay: 3s; animation-duration: 13s;">🍴</div>
-<div class="food-particle" style="left: 65%; animation-delay: 1.5s; animation-duration: 11s;">🍔</div>
-<div class="food-particle" style="left: 75%; animation-delay: 5s; animation-duration: 8s;">🍽️</div>
-<div class="food-particle" style="left: 85%; animation-delay: 0.2s; animation-duration: 12s;">🍣</div>
-<div class="food-particle" style="left: 95%; animation-delay: 2.5s; animation-duration: 10s;">🥤</div>
+<div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 7s;">🍔</div>
+<div class="food-particle" style="left: 15%; animation-delay: 1.2s; animation-duration: 9s;">🍽️</div>
+<div class="food-particle" style="left: 25%; animation-delay: 0.2s; animation-duration: 10s;">🍣</div>
+<div class="food-particle" style="left: 35%; animation-delay: 2.5s; animation-duration: 8s;">🥤</div>
+<div class="food-particle" style="left: 45%; animation-delay: 0s; animation-duration: 9s;">🥪</div>
+<div class="food-particle" style="left: 55%; animation-delay: 1.8s; animation-duration: 11s;">🍴</div>
+<div class="food-particle" style="left: 65%; animation-delay: 0.5s; animation-duration: 9s;">🍔</div>
+<div class="food-particle" style="left: 75%; animation-delay: 3s; animation-duration: 7s;">🍽️</div>
+<div class="food-particle" style="left: 85%; animation-delay: 0.1s; animation-duration: 10s;">🍣</div>
+<div class="food-particle" style="left: 95%; animation-delay: 1.5s; animation-duration: 8s;">🥤</div>
 """, unsafe_allow_html=True)
 
 # --- TYTUŁ GŁÓWNY ---
