@@ -15,7 +15,7 @@ st.set_page_config(
 if 'current_menu' not in st.session_state:
     st.session_state.current_menu = "Główne"
 
-# --- POMOCNICZE FUNKCJE (Usuwanie polskich znaków dla PDF) ---
+# --- POMOCNICZE FUNKCJE ---
 def clean_txt(text):
     if not isinstance(text, str):
         return ""
@@ -70,11 +70,11 @@ def generate_pdf(danie, porcje, skladniki_skalowane):
     
     return bytes(pdf.output())
 
-# --- STYLIZACJA I ANIMOWANE TŁO (Bez pustych linii!) ---
+# --- STYLIZACJA I ANIMOWANE TŁO (Kod wyrównany do lewej, aby zapobiec błędom) ---
 bg_style = """<style>
 .stApp {
-    background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%);
-    color: #ffffff;
+    background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%) !important;
+    color: #ffffff !important;
 }
 @keyframes foodRain {
     0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
@@ -83,39 +83,39 @@ bg_style = """<style>
     100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 .food-particle {
-    position: fixed;
-    top: -15%;
-    font-size: 26px;
-    user-select: none;
-    pointer-events: none;
-    animation: foodRain 9s linear infinite;
-    animation-fill-mode: backwards;
-    z-index: 99;
+    position: fixed !important;
+    top: -15% !important;
+    font-size: 28px !important;
+    user-select: none !important;
+    pointer-events: none !important;
+    animation: foodRain 8s linear infinite !important;
+    z-index: 1 !important;
 }
 .main-title {
     text-align: center;
     font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto;
     font-weight: 800;
-    font-size: 32px;
+    font-size: 34px;
     margin-bottom: 30px;
     color: #ff9f43;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 </style>"""
 
+# WAŻNE: Te linie celowo zaczynają się od brzegu ekranu, aby wyeliminować "widzenie kodu"
 if st.session_state.current_menu == "Główne":
     bg_style += """
-    <div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 7s;">🍔</div>
-    <div class="food-particle" style="left: 15%; animation-delay: 1.2s; animation-duration: 9s;">🍽️</div>
-    <div class="food-particle" style="left: 25%; animation-delay: 0.2s; animation-duration: 10s;">🍣</div>
-    <div class="food-particle" style="left: 35%; animation-delay: 2.5s; animation-duration: 8s;">🥤</div>
-    <div class="food-particle" style="left: 45%; animation-delay: 0s; animation-duration: 9s;">🥪</div>
-    <div class="food-particle" style="left: 55%; animation-delay: 1.8s; animation-duration: 11s;">🍴</div>
-    <div class="food-particle" style="left: 65%; animation-delay: 0.5s; animation-duration: 9s;">🍔</div>
-    <div class="food-particle" style="left: 75%; animation-delay: 3s; animation-duration: 7s;">🍽️</div>
-    <div class="food-particle" style="left: 85%; animation-delay: 0.1s; animation-duration: 10s;">🍣</div>
-    <div class="food-particle" style="left: 95%; animation-delay: 1.5s; animation-duration: 8s;">🥤</div>
-    """
+<div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 6s;">🍔</div>
+<div class="food-particle" style="left: 15%; animation-delay: 1.2s; animation-duration: 8s;">🍽️</div>
+<div class="food-particle" style="left: 25%; animation-delay: 0.2s; animation-duration: 9s;">🍣</div>
+<div class="food-particle" style="left: 35%; animation-delay: 2.5s; animation-duration: 7s;">🥤</div>
+<div class="food-particle" style="left: 45%; animation-delay: 0s; animation-duration: 8s;">🥪</div>
+<div class="food-particle" style="left: 55%; animation-delay: 1.8s; animation-duration: 10s;">🍴</div>
+<div class="food-particle" style="left: 65%; animation-delay: 0.5s; animation-duration: 8s;">🍔</div>
+<div class="food-particle" style="left: 75%; animation-delay: 3s; animation-duration: 6s;">🍽️</div>
+<div class="food-particle" style="left: 85%; animation-delay: 0.1s; animation-duration: 9s;">🍣</div>
+<div class="food-particle" style="left: 95%; animation-delay: 1.5s; animation-duration: 7s;">🥤</div>
+"""
 
 st.markdown(bg_style, unsafe_allow_html=True)
 
@@ -166,7 +166,6 @@ elif st.session_state.current_menu == "Pracownia":
             if pd.isna(danie_nazwa) or pd.isna(skladniki_tekst):
                 continue
                 
-            # Naprawione st.expander
             with st.expander(f"🍔 {danie_nazwa}"):
                 ilosc = st.number_input(
                     f"Wpisz ilość porcji dla: {danie_nazwa}", 
@@ -186,7 +185,7 @@ elif st.session_state.current_menu == "Pracownia":
                         skladniki_skalowane.append(scaled_item)
                         st.write(f"- {scaled_item}")
                 
-                # Bezpieczne generowanie PDF
+                # Generowanie PDF
                 try:
                     pdf_data = generate_pdf(danie_nazwa, ilosc, skladniki_skalowane)
                     st.download_button(
