@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Ustawienia strony dla urządzeń mobilnych
 st.set_page_config(
@@ -27,7 +28,7 @@ st.markdown("""
         overflow: hidden;
     }
     
-    /* Animacja deszczu jedzenia - startuje natychmiast z góry ekranu */
+    /* Animacja deszczu jedzenia */
     @keyframes foodRain {
         0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
         5% { opacity: 0.8; }
@@ -73,6 +74,10 @@ st.markdown("""
 # --- TYTUŁ GŁÓWNY ---
 st.markdown('<div class="main-title">MaksStandard</div>', unsafe_allow_html=True)
 
+# --- LINK DO TWOJEGO ARKUSZA GOOGLE (WYDANEGO JAKO CSV) ---
+# TUTAJ WKLEJ SWÓJ LINK SKOPIOWANY W KROKU 2 (pomiędzy cudzysłowy):
+LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQM0vjCm1BiSiMejP38yW62cFTH7YpnIQDlXI3Tt3Ip0yJ5yF2scsH4kFpCkMSPXIqvLZogwT7uQFry/pub?gid=0&single=true&output=csv"
+
 # --- STAN APLIKACJI (Session State dla nawigacji) ---
 if 'current_menu' not in st.session_state:
     st.session_state.current_menu = "Główne"
@@ -105,14 +110,33 @@ if st.session_state.current_menu == "Główne":
             st.session_state.current_menu = "Zarząd"
             st.rerun()
 
-# --- PODMENU: PRACOWNIA (Bez hasła) ---
+# --- PODMENU: PRACOWNIA (Pobiera dane z Excela w czasie rzeczywistym) ---
 elif st.session_state.current_menu == "Pracownia":
-    st.subheader("🛠️ Pracownia – Panel Główny")
+    st.subheader("🛠️ Pracownia – Standardy Dań")
     if st.button("⬅️ Powrót", on_click=go_back): pass
     
-    st.write("Wybierz sekcję w Pracowni:")
-    st.button("Dodatkowe podmenu 1")
-    st.button("Dodatkowe podmenu 2")
+    st.write("Wybierz danie z listy, aby zobaczyć standard i recepturę:")
+    
+    try:
+        # Pobieranie danych z Google Sheets
+        df = pd.read_csv(LINK_CSV)
+        
+        # Tworzenie przycisku (akordeonu) dla każdego dania z tabeli
+        for index, row in df.iterrows():
+            danie_nazwa = row['Danie']
+            skladniki_tekst = row['Skladniki']
+            
+            # Wyszukiwarka w formie eleganckich, rozwijanych klocków na iOS
+            with st.expander(f"🍔 {danie_nazwa}"):
+                st.markdown("**Składniki i standard przygotowania:**")
+                # Zamiana przecinków na nowe linie dla ładniejszego wyglądu listy
+                skladniki_list = skladniki_tekst.split(",")
+                for item in skladniki_list:
+                    st.write(f"- {item.strip()}")
+                    
+    except Exception as e:
+        st.error("Nie udało się pobrać danych z Arkusza Google. Upewnij się, że poprawnie wkleiłeś link CSV w kodzie i udostępniłeś arkusz.")
+        st.info("Podpowiedź: Jeżeli dopiero co stworzyłeś link, upewnij się, że opublikowałeś zakładkę jako CSV.")
 
 # --- PODMENU: KUCHNIA (Hasło: 0000) ---
 elif st.session_state.current_menu == "Kuchnia":
