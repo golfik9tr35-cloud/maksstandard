@@ -48,14 +48,13 @@ st.markdown("""
     }
 </style>
 
-<!-- Wygenerowanie spadającego jedzenia -->
 <div class="food-particle" style="left: 10%; animation-delay: 0s; animation-duration: 10s;">🍔</div>
 <div class="food-particle" style="left: 25%; animation-delay: 3s; animation-duration: 14s;">🍣</div>
 <div class="food-particle" style="left: 45%; animation-delay: 1s; animation-duration: 11s;">🥪</div>
 <div class="food-particle" style="left: 65%; animation-delay: 5s; animation-duration: 13s;">🍔</div>
 <div class="food-particle" style="left: 85%; animation-delay: 2s; animation-duration: 12s;">🍣</div>
 <div class="food-particle" style="left: 95%; animation-delay: 4s; animation-duration: 9s;">🥪</div>
-""", unsafe_index=True)
+""", unsafe_allow_html=True)
 
 # --- TYTUŁ GŁÓWNY ---
 st.markdown('<div class="main-title">MaksStandard</div>', unsafe_allow_html=True)
@@ -97,7 +96,6 @@ elif st.session_state.current_menu == "Pracownia":
     st.subheader("🛠️ Pracownia – Panel Główny")
     if st.button("⬅️ Powrót", on_click=go_back): pass
     
-    # Tutaj powstaną dodatkowe opcje w kolejnym kroku
     st.write("Wybierz sekcję w Pracowni:")
     st.button("Dodatkowe podmenu 1")
     st.button("Dodatkowe podmenu 2")
@@ -109,7 +107,6 @@ elif st.session_state.current_menu == "Kuchnia":
     
     if pin == "0000":
         st.success("Dostęp przyznany!")
-        # Zawartość po wpisaniu poprawnego hasła
         st.button("Dodatkowe menu Kuchni 1")
         st.button("Dodatkowe menu Kuchni 2")
     elif pin != "":
