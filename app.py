@@ -92,8 +92,8 @@ def generate_food_rain(n=18):
         )
     return "".join(particles)
 
-# --- STYLIZACJA I ANIMOWANE TŁO ---
-bg_style = """<style>
+# --- GLOBALNY STYL DLA CAŁEJ APLIKACJI (Tło, Tytuły, Animacje) ---
+global_style = """<style>
 .stApp {
 background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%) !important;
 color: #ffffff !important;
@@ -141,66 +141,70 @@ text-transform: uppercase;
 position: relative;
 z-index: 2;
 }
-
-/* --- Przezroczyste kafelki (Styl Glassmorphism) --- */
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button {
-    width: 100%;
-    min-height: 118px; 
-    background: rgba(255, 255, 255, 0.05) !important; /* Przezroczyste tło */
-    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Subtelna ramka */
-    border-radius: 20px;
-    white-space: pre-line;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    transition: all 0.22s ease-in-out !important;
-    position: relative;
-    z-index: 2;
-}
-
-/* Efekt najechania myszką (Hover) - rozjaśnienie kafelka */
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:hover {
-    background: rgba(255, 255, 255, 0.16) !important; /* Jaśniejsze tło */
-    border-color: rgba(255, 255, 255, 0.35) !important;
-    transform: translateY(-4px) scale(1.01) !important;
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Efekt kliknięcia (Active) - jeszcze jaśniejszy błysk */
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active {
-    background: rgba(255, 255, 255, 0.28) !important; /* Najjaśniejsze tło przy kliknięciu */
-    transform: scale(0.98) !important;
-}
-
-/* Stylizacja i wymuszenie widoczności tekstu wewnątrz przycisków */
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
-    line-height: 1.4;
-    color: #ffffff !important; /* Tekst zawsze będzie biały */
-}
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:first-child {
-    font-size: 24px;
-    opacity: 0.75;
-    margin: 0 0 2px 0;
-}
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(2) {
-    font-size: 16px;
-    font-weight: 800;
-    margin: 0;
-}
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(3) {
-    font-size: 11px;
-    font-weight: 400;
-    opacity: 0.7;
-    margin: 3px 0 0 0;
-    letter-spacing: 0.2px;
-}
 </style>"""
 
-# Pokazuj deszcz jedzenia tylko w menu glownym
-if st.session_state.current_menu == "Główne":
-    bg_style += generate_food_rain()
+st.markdown(global_style, unsafe_allow_html=True)
 
-st.markdown(bg_style, unsafe_allow_html=True)
+# --- STYLIZACJA TYLKO I WYŁĄCZNIE DLA MENU GŁÓWNEGO ---
+if st.session_state.current_menu == "Główne":
+    main_menu_style = """<style>
+    /* --- Przezroczyste kafelki (Styl Glassmorphism) --- */
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button {
+        width: 100%;
+        min-height: 118px; 
+        background: rgba(255, 255, 255, 0.05) !important; /* Przezroczyste tło */
+        border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Subtelna ramka */
+        border-radius: 20px;
+        white-space: pre-line;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        transition: all 0.22s ease-in-out !important;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Efekt najechania myszką (Hover) - rozjaśnienie kafelka */
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:hover {
+        background: rgba(255, 255, 255, 0.16) !important; /* Jaśniejsze tło */
+        border-color: rgba(255, 255, 255, 0.35) !important;
+        transform: translateY(-4px) scale(1.01) !important;
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Efekt kliknięcia (Active) - jeszcze jaśniejszy błysk */
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active {
+        background: rgba(255, 255, 255, 0.28) !important; /* Najjaśniejsze tło przy kliknięciu */
+        transform: scale(0.98) !important;
+    }
+
+    /* Stylizacja i wymuszenie widoczności tekstu wewnątrz przycisków */
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
+        line-height: 1.4;
+        color: #ffffff !important; /* Tekst zawsze będzie biały */
+    }
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:first-child {
+        font-size: 24px;
+        opacity: 0.75;
+        margin: 0 0 2px 0;
+    }
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(2) {
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0;
+    }
+    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(3) {
+        font-size: 11px;
+        font-weight: 400;
+        opacity: 0.7;
+        margin: 3px 0 0 0;
+        letter-spacing: 0.2px;
+    }
+    </style>"""
+    
+    # Dodanie deszczu jedzenia oraz stylów kafli tylko na stronie głównej
+    main_menu_style += generate_food_rain()
+    st.markdown(main_menu_style, unsafe_allow_html=True)
 
 # --- TYTUŁ GŁÓWNY ---
 st.markdown('<div class="main-title">🍔 MaksStandard</div>', unsafe_allow_html=True)
@@ -230,7 +234,7 @@ if st.session_state.current_menu == "Główne":
 
 # --- PODMENU: PRACOWNIA ---
 elif st.session_state.current_menu == "Pracownia":
-    st.subheader("🛠️ Pracownia – Standardy Dań")
+    st.subheader("🧑‍🍳 Pracownia – Standardy Dań")
     if st.button("⬅️ Powrót"):
         st.session_state.current_menu = "Główne"
         st.rerun()
