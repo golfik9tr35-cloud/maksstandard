@@ -8,8 +8,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- STYLIZACJA I ANIMOWANE TŁO (Deszcz jedzenia) ---
+# --- STYLIZACJA I ANIMOWANE TŁO (Szybki deszcz jedzenia + własna ikona iOS) ---
 st.markdown("""
+<head>
+    <link rel="apple-touch-icon" href="https://img.icons8.com/emoji/192/hamburger-emoji.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://img.icons8.com/emoji/152/hamburger-emoji.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/emoji/180/hamburger-emoji.png">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/emoji/192/hamburger-emoji.png">
+</head>
 <style>
     /* Tło aplikacji */
     .stApp {
@@ -20,10 +26,10 @@ st.markdown("""
     
     /* Animacja deszczu jedzenia */
     @keyframes foodRain {
-        0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
+        0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
         10% { opacity: 0.8; }
         90% { opacity: 0.8; }
-        100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
     }
     
     .food-particle {
@@ -32,7 +38,8 @@ st.markdown("""
         font-size: 24px;
         user-select: none;
         pointer-events: none;
-        animation: foodRain 12s linear infinite;
+        animation: foodRain 10s linear infinite;
+        animation-fill-mode: backwards; /* Startuje od pierwszej klatki natychmiast */
         z-index: 0;
     }
     
@@ -48,12 +55,16 @@ st.markdown("""
     }
 </style>
 
-<div class="food-particle" style="left: 10%; animation-delay: 0s; animation-duration: 10s;">🍔</div>
-<div class="food-particle" style="left: 25%; animation-delay: 3s; animation-duration: 14s;">🍣</div>
-<div class="food-particle" style="left: 45%; animation-delay: 1s; animation-duration: 11s;">🥪</div>
-<div class="food-particle" style="left: 65%; animation-delay: 5s; animation-duration: 13s;">🍔</div>
-<div class="food-particle" style="left: 85%; animation-delay: 2s; animation-duration: 12s;">🍣</div>
-<div class="food-particle" style="left: 95%; animation-delay: 4s; animation-duration: 9s;">🥪</div>
+<div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 8s;">🍔</div>
+<div class="food-particle" style="left: 15%; animation-delay: 2s; animation-duration: 11s;">🍽️</div>
+<div class="food-particle" style="left: 25%; animation-delay: 0.5s; animation-duration: 12s;">🍣</div>
+<div class="food-particle" style="left: 35%; animation-delay: 4s; animation-duration: 9s;">🥤</div>
+<div class="food-particle" style="left: 45%; animation-delay: 0s; animation-duration: 10s;">🥪</div>
+<div class="food-particle" style="left: 55%; animation-delay: 3s; animation-duration: 13s;">🍴</div>
+<div class="food-particle" style="left: 65%; animation-delay: 1.5s; animation-duration: 11s;">🍔</div>
+<div class="food-particle" style="left: 75%; animation-delay: 5s; animation-duration: 8s;">🍽️</div>
+<div class="food-particle" style="left: 85%; animation-delay: 0.2s; animation-duration: 12s;">🍣</div>
+<div class="food-particle" style="left: 95%; animation-delay: 2.5s; animation-duration: 10s;">🥤</div>
 """, unsafe_allow_html=True)
 
 # --- TYTUŁ GŁÓWNY ---
