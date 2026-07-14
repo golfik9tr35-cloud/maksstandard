@@ -76,7 +76,7 @@ st.markdown('<div class="main-title">MaksStandard</div>', unsafe_allow_html=True
 
 # --- LINK DO TWOJEGO ARKUSZA GOOGLE (WYDANEGO JAKO CSV) ---
 # TUTAJ WKLEJ SWÓJ LINK SKOPIOWANY W KROKU 2 (pomiędzy cudzysłowy):
-LINK_CSV = https://docs.google.com/spreadsheets/d/e/2PACX-1vQM0vjCm1BiSiMejP38yW62cFTH7YpnIQDlXI3Tt3Ip0yJ5yF2scsH4kFpCkMSPXIqvLZogwT7uQFry/pub?gid=0&single=true&output=csv
+LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQM0vjCm1BiSiMejP38yW62cFTH7YpnIQDlXI3Tt3Ip0yJ5yF2scsH4kFpCkMSPXIqvLZogwT7uQFry/pub?gid=0&single=true&output=csv"
 
 # --- STAN APLIKACJI (Session State dla nawigacji) ---
 if 'current_menu' not in st.session_state:
