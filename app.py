@@ -142,60 +142,57 @@ position: relative;
 z-index: 2;
 }
 
-/* --- Nowoczesne, mniejsze kafelki menu glownego --- */
+/* --- Przezroczyste kafelki (Styl Glassmorphism) --- */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button {
     width: 100%;
-    min-height: 118px; /* Zmniejszone ze 148px na 118px */
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; /* Nieco zgrabniejszy zaokrąglony róg */
+    min-height: 118px; 
+    background: rgba(255, 255, 255, 0.05) !important; /* Przezroczyste tło */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Subtelna ramka */
+    border-radius: 20px;
     white-space: pre-line;
-    color: #ffffff;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    transition: all 0.22s ease-in-out !important;
     position: relative;
     z-index: 2;
 }
+
+/* Efekt najechania myszką (Hover) - rozjaśnienie kafelka */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 16px 32px rgba(0,0,0,0.45);
-    border-color: rgba(255,255,255,0.32);
+    background: rgba(255, 255, 255, 0.16) !important; /* Jaśniejsze tło */
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    transform: translateY(-4px) scale(1.01) !important;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4) !important;
 }
+
+/* Efekt kliknięcia (Active) - jeszcze jaśniejszy błysk */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active {
-    transform: scale(0.97);
+    background: rgba(255, 255, 255, 0.28) !important; /* Najjaśniejsze tło przy kliknięciu */
+    transform: scale(0.98) !important;
 }
+
+/* Stylizacja i wymuszenie widoczności tekstu wewnątrz przycisków */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
     line-height: 1.4;
+    color: #ffffff !important; /* Tekst zawsze będzie biały */
 }
-/* Poprawka emotek na kafelkach: mniejsze i subtelnie przezroczyste */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:first-child {
-    font-size: 24px; /* Zmniejszone z 32px */
-    opacity: 0.7;    /* Efekt przezroczystości (70% widoczności) */
+    font-size: 24px;
+    opacity: 0.75;
     margin: 0 0 2px 0;
 }
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(2) {
-    font-size: 16px; /* Zmniejszone z 17px */
+    font-size: 16px;
     font-weight: 800;
     margin: 0;
 }
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(3) {
-    font-size: 11px; /* Zmniejszone z 11.5px */
+    font-size: 11px;
     font-weight: 400;
-    opacity: 0.75;
+    opacity: 0.7;
     margin: 3px 0 0 0;
     letter-spacing: 0.2px;
-}
-
-div[data-testid="column"]:nth-of-type(1) div[data-testid="stButton"]:nth-of-type(1) button {
-    background: linear-gradient(135deg, #ff9f43 0%, #ee5253 100%);
-}
-div[data-testid="column"]:nth-of-type(1) div[data-testid="stButton"]:nth-of-type(2) button {
-    background: linear-gradient(135deg, #10ac84 0%, #1dd1a1 100%);
-}
-div[data-testid="column"]:nth-of-type(2) div[data-testid="stButton"]:nth-of-type(1) button {
-    background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
-}
-div[data-testid="column"]:nth-of-type(2) div[data-testid="stButton"]:nth-of-type(2) button {
-    background: linear-gradient(135deg, #2e86de 0%, #0652DD 100%);
 }
 </style>"""
 
@@ -217,7 +214,6 @@ if st.session_state.current_menu == "Główne":
 
     col1, col2 = st.columns(2, gap="medium")
     with col1:
-        # Zmiana ikonki z 🛠️ na 🧑‍🍳
         if st.button("🧑‍🍳\n\nPracownia\n\nStandardy i receptury", use_container_width=True, key="btn_pracownia"):
             st.session_state.current_menu = "Pracownia"
             st.rerun()
