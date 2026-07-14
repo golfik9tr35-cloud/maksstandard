@@ -70,51 +70,46 @@ def generate_pdf(danie, porcje, skladniki_skalowane):
     
     return bytes(pdf.output())
 
-# --- STYLIZACJA I ANIMOWANE TŁO (Kod wyrównany do lewej, aby zapobiec błędom) ---
+# --- STYLIZACJA I ANIMOWANE TŁO (Mżawka jedzenia - bez wcięć) ---
 bg_style = """<style>
 .stApp {
-    background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%) !important;
-    color: #ffffff !important;
+background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%) !important;
+color: #ffffff !important;
 }
 @keyframes foodRain {
-    0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
-    5% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
+10% { opacity: 0.35; }
+90% { opacity: 0.35; }
+100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 .food-particle {
-    position: fixed !important;
-    top: -15% !important;
-    font-size: 28px !important;
-    user-select: none !important;
-    pointer-events: none !important;
-    animation: foodRain 8s linear infinite !important;
-    z-index: 1 !important;
+position: fixed !important;
+top: -15% !important;
+font-size: 20px !important;
+user-select: none !important;
+pointer-events: none !important;
+animation: foodRain 16s linear infinite !important;
+z-index: 1 !important;
 }
 .main-title {
-    text-align: center;
-    font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto;
-    font-weight: 800;
-    font-size: 34px;
-    margin-bottom: 30px;
-    color: #ff9f43;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+text-align: center;
+font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto;
+font-weight: 800;
+font-size: 34px;
+margin-bottom: 30px;
+color: #ff9f43;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 </style>"""
 
-# WAŻNE: Te linie celowo zaczynają się od brzegu ekranu, aby wyeliminować "widzenie kodu"
+# Pokazuj subtelny opad tylko w menu głównym
 if st.session_state.current_menu == "Główne":
     bg_style += """
-<div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 6s;">🍔</div>
-<div class="food-particle" style="left: 15%; animation-delay: 1.2s; animation-duration: 8s;">🍽️</div>
-<div class="food-particle" style="left: 25%; animation-delay: 0.2s; animation-duration: 9s;">🍣</div>
-<div class="food-particle" style="left: 35%; animation-delay: 2.5s; animation-duration: 7s;">🥤</div>
-<div class="food-particle" style="left: 45%; animation-delay: 0s; animation-duration: 8s;">🥪</div>
-<div class="food-particle" style="left: 55%; animation-delay: 1.8s; animation-duration: 10s;">🍴</div>
-<div class="food-particle" style="left: 65%; animation-delay: 0.5s; animation-duration: 8s;">🍔</div>
-<div class="food-particle" style="left: 75%; animation-delay: 3s; animation-duration: 6s;">🍽️</div>
-<div class="food-particle" style="left: 85%; animation-delay: 0.1s; animation-duration: 9s;">🍣</div>
-<div class="food-particle" style="left: 95%; animation-delay: 1.5s; animation-duration: 7s;">🥤</div>
+<div class="food-particle" style="left: 10%; animation-delay: 0s; animation-duration: 14s;">🍔</div>
+<div class="food-particle" style="left: 30%; animation-delay: 3s; animation-duration: 18s;">🍣</div>
+<div class="food-particle" style="left: 50%; animation-delay: 6s; animation-duration: 16s;">🥪</div>
+<div class="food-particle" style="left: 70%; animation-delay: 1.5s; animation-duration: 15s;">🥤</div>
+<div class="food-particle" style="left: 90%; animation-delay: 4.5s; animation-duration: 17s;">🍕</div>
 """
 
 st.markdown(bg_style, unsafe_allow_html=True)
@@ -124,10 +119,6 @@ st.markdown('<div class="main-title">MaksStandard</div>', unsafe_allow_html=True
 
 # --- LINK DO ARKUSZA GOOGLE ---
 LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQM0vjCm1BiSiMejP38yW62cFTH7YpnIQDlXI3Tt3Ip0yJ5yF2scsH4kFpCkMSPXIqvLZogwT7uQFry/pub?gid=0&single=true&output=csv"
-
-def go_back():
-    st.session_state.current_menu = "Główne"
-    st.rerun()
 
 # --- MENU GŁÓWNE ---
 if st.session_state.current_menu == "Główne":
@@ -150,7 +141,9 @@ if st.session_state.current_menu == "Główne":
 # --- PODMENU: PRACOWNIA ---
 elif st.session_state.current_menu == "Pracownia":
     st.subheader("🛠️ Pracownia – Standardy Dań")
-    if st.button("⬅️ Powrót", on_click=go_back): pass
+    if st.button("⬅️ Powrót"):
+        st.session_state.current_menu = "Główne"
+        st.rerun()
     
     try:
         df = pd.read_csv(LINK_CSV, sep=None, engine='python')
@@ -211,7 +204,9 @@ elif st.session_state.current_menu == "Kuchnia":
         st.success("Dostęp przyznany!")
     elif pin != "":
         st.error("Błędny kod PIN!")
-    if st.button("⬅️ Powrót", on_click=go_back): pass
+    if st.button("⬅️ Powrót"):
+        st.session_state.current_menu = "Główne"
+        st.rerun()
 
 # --- PODMENU: MAGAZYN ---
 elif st.session_state.current_menu == "Magazyn":
@@ -221,7 +216,9 @@ elif st.session_state.current_menu == "Magazyn":
         st.success("Dostęp przyznany!")
     elif pin != "":
         st.error("Błędny kod PIN!")
-    if st.button("⬅️ Powrót", on_click=go_back): pass
+    if st.button("⬅️ Powrót"):
+        st.session_state.current_menu = "Główne"
+        st.rerun()
 
 # --- PODMENU: ZARZĄD ---
 elif st.session_state.current_menu == "Zarząd":
@@ -231,4 +228,6 @@ elif st.session_state.current_menu == "Zarząd":
         st.success("Dostęp przyznany!")
     elif pin != "":
         st.error("Błędny kod PIN!")
-    if st.button("⬅️ Powrót", on_click=go_back): pass
+    if st.button("⬅️ Powrót"):
+        st.session_state.current_menu = "Główne"
+        st.rerun()
