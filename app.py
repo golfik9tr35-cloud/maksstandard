@@ -32,7 +32,7 @@ st.markdown("""
     @keyframes foodRain {
         0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
         5% { opacity: 0.8; }
-        95% { opacity: 0.8; }
+        90% { opacity: 0.8; }
         100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
     
@@ -74,8 +74,7 @@ st.markdown("""
 # --- TYTUŁ GŁÓWNY ---
 st.markdown('<div class="main-title">MaksStandard</div>', unsafe_allow_html=True)
 
-# --- LINK DO TWOJEGO ARKUSZA GOOGLE (WYDANEGO JAKO CSV) ---
-# TUTAJ WKLEJ SWÓJ LINK SKOPIOWANY W KROKU 2 (pomiędzy cudzysłowy):
+# --- LINK DO TWOJEGO ARKUSZA GOOGLE ---
 LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQM0vjCm1BiSiMejP38yW62cFTH7YpnIQDlXI3Tt3Ip0yJ5yF2scsH4kFpCkMSPXIqvLZogwT7uQFry/pub?gid=0&single=true&output=csv"
 
 # --- STAN APLIKACJI (Session State dla nawigacji) ---
@@ -118,25 +117,40 @@ elif st.session_state.current_menu == "Pracownia":
     st.write("Wybierz danie z listy, aby zobaczyć standard i recepturę:")
     
     try:
-        # Pobieranie danych z Google Sheets
-        df = pd.read_csv(LINK_CSV)
+        # Pobieranie danych z obsługą średników (sep=None automatycznie wykrywa przecinek lub średnik)
+        df = pd.read_csv(LINK_CSV, sep=None, engine='python')
         
-        # Tworzenie przycisku (akordeonu) dla każdego dania z tabeli
+        # Oczyszczenie nazw kolumn ze spacji i wielkości liter
+        df.columns = df.columns.str.strip()
+        
+        # Sprawdzamy czy kolumny istnieją pod różnymi nazwami (z polskimi znakami lub bez)
+        col_danie = [c for c in df.columns if c.lower() in ['danie', 'nazwa']][0]
+        col_skladniki = [c for c in df.columns if c.lower() in ['skladniki', 'składniki', 'receptura']][0]
+        
+        # Tworzenie przycisku dla każdego dania z tabeli
         for index, row in df.iterrows():
-            danie_nazwa = row['Danie']
-            skladniki_tekst = row['Skladniki']
+            danie_nazwa = row[col_danie]
+            skladniki_tekst = row[col_skladniki]
             
-            # Wyszukiwarka w formie eleganckich, rozwijanych klocków na iOS
+            # Jeśli wiersz jest pusty, pomiń go
+            if pd.isna(danie_nazwa) or pd.isna(skladniki_tekst):
+                continue
+                
             with st.expander(f"🍔 {danie_nazwa}"):
                 st.markdown("**Składniki i standard przygotowania:**")
-                # Zamiana przecinków na nowe linie dla ładniejszego wyglądu listy
-                skladniki_list = skladniki_tekst.split(",")
+                # Rozdzielenie składników po przecinku lub średniku
+                if ";" in str(skladniki_tekst):
+                    skladniki_list = str(skladniki_tekst).split(";")
+                else:
+                    skladniki_list = str(skladniki_tekst).split(",")
+                    
                 for item in skladniki_list:
-                    st.write(f"- {item.strip()}")
+                    if item.strip():
+                        st.write(f"- {item.strip()}")
                     
     except Exception as e:
-        st.error("Nie udało się pobrać danych z Arkusza Google. Upewnij się, że poprawnie wkleiłeś link CSV w kodzie i udostępniłeś arkusz.")
-        st.info("Podpowiedź: Jeżeli dopiero co stworzyłeś link, upewnij się, że opublikowałeś zakładkę jako CSV.")
+        st.error("Nie udało się pobrać danych z Arkusza Google.")
+        st.info(f"Szczegóły błędu: {e}")
 
 # --- PODMENU: KUCHNIA (Hasło: 0000) ---
 elif st.session_state.current_menu == "Kuchnia":
