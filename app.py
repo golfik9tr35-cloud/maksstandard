@@ -142,12 +142,12 @@ position: relative;
 z-index: 2;
 }
 
-/* --- Nowoczesne kafelki menu glownego --- */
+/* --- Nowoczesne, mniejsze kafelki menu glownego --- */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button {
     width: 100%;
-    min-height: 148px;
+    min-height: 118px; /* Zmniejszone ze 148px na 118px */
     border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 22px;
+    border-radius: 20px; /* Nieco zgrabniejszy zaokrąglony róg */
     white-space: pre-line;
     color: #ffffff;
     box-shadow: 0 10px 24px rgba(0,0,0,0.35);
@@ -164,21 +164,23 @@ div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active 
     transform: scale(0.97);
 }
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
-    line-height: 1.5;
+    line-height: 1.4;
 }
+/* Poprawka emotek na kafelkach: mniejsze i subtelnie przezroczyste */
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:first-child {
-    font-size: 32px;
+    font-size: 24px; /* Zmniejszone z 32px */
+    opacity: 0.7;    /* Efekt przezroczystości (70% widoczności) */
     margin: 0 0 2px 0;
 }
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(2) {
-    font-size: 17px;
+    font-size: 16px; /* Zmniejszone z 17px */
     font-weight: 800;
     margin: 0;
 }
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(3) {
-    font-size: 11.5px;
+    font-size: 11px; /* Zmniejszone z 11.5px */
     font-weight: 400;
-    opacity: 0.8;
+    opacity: 0.75;
     margin: 3px 0 0 0;
     letter-spacing: 0.2px;
 }
@@ -215,7 +217,8 @@ if st.session_state.current_menu == "Główne":
 
     col1, col2 = st.columns(2, gap="medium")
     with col1:
-        if st.button("🛠️\n\nPracownia\n\nStandardy i receptury", use_container_width=True, key="btn_pracownia"):
+        # Zmiana ikonki z 🛠️ na 🧑‍🍳
+        if st.button("🧑‍🍳\n\nPracownia\n\nStandardy i receptury", use_container_width=True, key="btn_pracownia"):
             st.session_state.current_menu = "Pracownia"
             st.rerun()
         if st.button("🍳\n\nKuchnia\n\nStrefa chroniona", use_container_width=True, key="btn_kuchnia"):
