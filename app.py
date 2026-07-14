@@ -271,7 +271,7 @@ if st.session_state.current_menu == "Główne":
         if st.button("📦\n\nMagazyn\n\nStrefa chroniona", use_container_width=True, key="btn_magazyn"):
             st.session_state.current_menu = "Magazyn"
             st.rerun()
-        if st.button("👔\n\nZarząd\n\nPanel zarządzania", use_container_width=True, key="btn_zarzad"):
+        if st.button("👔\n\nZarząd\n\nPanel Zarządu", use_container_width=True, key="btn_zarzad"):
             st.session_state.current_menu = "Zarząd"
             st.rerun()
 
