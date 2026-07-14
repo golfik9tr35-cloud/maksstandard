@@ -92,7 +92,7 @@ def generate_food_rain(n=18):
         )
     return "".join(particles)
 
-# --- GLOBALNY STYL DLA CAŁEJ APLIKACJI (Tło, Tytuły, Animacje) ---
+# --- GLOBALNY STYL DLA CAŁEJ APLIKACJI (Tło, Tytuły, Przyciski, Expandery) ---
 global_style = """<style>
 .stApp {
 background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%) !important;
@@ -141,68 +141,111 @@ text-transform: uppercase;
 position: relative;
 z-index: 2;
 }
+
+/* --- Nowy, przezroczysty styl dla normalnych przycisków (np. Powrót, Pobierz PDF) --- */
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+}
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:hover {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+}
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active {
+    background: rgba(255, 255, 255, 0.26) !important;
+    transform: scale(0.97) !important;
+}
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
+    color: #ffffff !important;
+}
+
+/* --- Przezroczysty, elegancki styl dla list dań (st.expander) --- */
+div[data-testid="stExpander"] {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden !important;
+    margin-bottom: 10px !important;
+}
+/* Główny nagłówek expandera */
+div[data-testid="stExpander"] > details > summary {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: #ffffff !important;
+    transition: background 0.2s ease !important;
+    padding: 12px 16px !important;
+}
+/* Efekty hover / focus / active dla nagłówka expandera */
+div[data-testid="stExpander"] > details > summary:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+div[data-testid="stExpander"] > details > summary:focus,
+div[data-testid="stExpander"] > details > summary:active {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+div[data-testid="stExpander"] > details > summary p {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+/* Zawartość wewnątrz rozwijanej listy */
+div[data-testid="stExpander"] > details > div[role="definition"] {
+    background: transparent !important;
+    color: #ffffff !important;
+    padding: 16px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
 </style>"""
 
 st.markdown(global_style, unsafe_allow_html=True)
 
-# --- STYLIZACJA TYLKO I WYŁĄCZNIE DLA MENU GŁÓWNEGO ---
+# --- STYLIZACJA SPECJALNA TYLKO DLA KAFELKÓW W MENU GŁÓWNYM ---
 if st.session_state.current_menu == "Główne":
     main_menu_style = """<style>
-    /* --- Przezroczyste kafelki (Styl Glassmorphism) --- */
+    /* Nadpisanie rozmiarów kafelków w menu głównym na duże */
     div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button {
-        width: 100%;
-        min-height: 118px; 
-        background: rgba(255, 255, 255, 0.05) !important; /* Przezroczyste tło */
-        border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Subtelna ramka */
-        border-radius: 20px;
-        white-space: pre-line;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
+        width: 100% !important;
+        min-height: 118px !important; 
+        border-radius: 20px !important;
+        white-space: pre-line !important;
         backdrop-filter: blur(4px) !important;
         -webkit-backdrop-filter: blur(4px) !important;
-        transition: all 0.22s ease-in-out !important;
-        position: relative;
-        z-index: 2;
     }
 
-    /* Efekt najechania myszką (Hover) - rozjaśnienie kafelka */
+    /* Hover dla dużych kafelków */
     div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:hover {
-        background: rgba(255, 255, 255, 0.16) !important; /* Jaśniejsze tło */
-        border-color: rgba(255, 255, 255, 0.35) !important;
         transform: translateY(-4px) scale(1.01) !important;
         box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4) !important;
     }
 
-    /* Efekt kliknięcia (Active) - jeszcze jaśniejszy błysk */
-    div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active {
-        background: rgba(255, 255, 255, 0.28) !important; /* Najjaśniejsze tło przy kliknięciu */
-        transform: scale(0.98) !important;
-    }
-
-    /* Stylizacja i wymuszenie widoczności tekstu wewnątrz przycisków */
+    /* Wymuszenie wieloliniowego tekstu w kafelkach */
     div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
-        line-height: 1.4;
-        color: #ffffff !important; /* Tekst zawsze będzie biały */
+        line-height: 1.4 !important;
     }
     div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:first-child {
-        font-size: 24px;
-        opacity: 0.75;
-        margin: 0 0 2px 0;
+        font-size: 24px !important;
+        opacity: 0.75 !important;
+        margin: 0 0 2px 0 !important;
     }
     div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(2) {
-        font-size: 16px;
-        font-weight: 800;
-        margin: 0;
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        margin: 0 !important;
     }
     div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p:nth-child(3) {
-        font-size: 11px;
-        font-weight: 400;
-        opacity: 0.7;
-        margin: 3px 0 0 0;
-        letter-spacing: 0.2px;
+        font-size: 11px !important;
+        font-weight: 400 !important;
+        opacity: 0.7 !important;
+        margin: 3px 0 0 0 !important;
+        letter-spacing: 0.2px !important;
     }
     </style>"""
     
-    # Dodanie deszczu jedzenia oraz stylów kafli tylko na stronie głównej
     main_menu_style += generate_food_rain()
     st.markdown(main_menu_style, unsafe_allow_html=True)
 
