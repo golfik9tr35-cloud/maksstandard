@@ -11,10 +11,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- STYLIZACJA I ANIMOWANE TŁO (Tylko na stronie głównej!) ---
+# --- STYLIZACJA I ANIMOWANE TŁO ---
 if 'current_menu' not in st.session_state:
     st.session_state.current_menu = "Główne"
 
+# Podstawowy styl tła (zawsze aktywny)
 bg_style = """
 <style>
     .stApp {
@@ -25,7 +26,7 @@ bg_style = """
     @keyframes foodRain {
         0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
         5% { opacity: 0.8; }
-        90% { opacity: 0.8; }
+        95% { opacity: 0.8; }
         100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
     .food-particle {
@@ -50,6 +51,7 @@ bg_style = """
 </style>
 """
 
+# Spadające jedzenie aktywuje się WYŁĄCZNIE na stronie głównej
 if st.session_state.current_menu == "Główne":
     bg_style += """
     <div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 7s;">🍔</div>
@@ -76,6 +78,7 @@ def go_back():
     st.session_state.current_menu = "Główne"
     st.rerun()
 
+# Funkcja przeliczająca ilości w przepisie
 def scale_ingredient(text, multiplier):
     if multiplier == 1:
         return text
@@ -90,21 +93,26 @@ def scale_ingredient(text, multiplier):
     pattern = r"(\d+(?:\.\d+)?)\s*(g|dag|dkg|kg|szt|ml|l|plaster|plastry|lyzka|łyżka|lyzki|łyżeczka)"
     return re.sub(pattern, multiply_match, text, flags=re.IGNORECASE)
 
+# Generator PDF kompatybilny ze wszystkimi wersjami fpdf/fpdf2
 def generate_pdf(danie, porcje, skladniki_skalowane):
     pdf = FPDF()
     pdf.add_page()
+    
     pdf.set_font("Helvetica", "B", 20)
-    pdf.cell(190, 10, "MaksStandard - Karta Produkcji", ln=True, align="C")
-    pdf.ln(10)
+    pdf.cell(190, 10, "MaksStandard - Karta Produkcji", align="C")
+    pdf.ln(15)
     
     pdf.set_font("Helvetica", "B", 14)
-    pdf.cell(190, 10, f"Danie: {danie}", ln=True)
-    pdf.cell(190, 10, f"Ilosc porcji: {porcje}", ln=True)
-    pdf.ln(5)
+    pdf.cell(190, 10, f"Danie: {danie}")
+    pdf.ln(8)
+    pdf.cell(190, 10, f"Ilosc porcji: {porcje}")
+    pdf.ln(12)
+    
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(190, 10, "Lista przeliczonych skladnikow:")
+    pdf.ln(8)
     
     pdf.set_font("Helvetica", "", 12)
-    pdf.cell(190, 10, "Lista przeliczonych skladnikow:", ln=True)
-    pdf.ln(2)
     
     def clean_txt(t):
         replacements = {'ą':'a','ć':'c','ę':'e','ł':'l','ń':'n','ó':'o','ś':'s','ź':'z','ż':'z',
@@ -114,13 +122,17 @@ def generate_pdf(danie, porcje, skladniki_skalowane):
         return t
 
     for item in skladniki_skalowane:
-        pdf.cell(190, 8, f"- {clean_txt(item)}", ln=True)
+        pdf.cell(190, 8, f"- {clean_txt(item)}")
+        pdf.ln(8)
         
     pdf.ln(15)
     pdf.set_font("Helvetica", "I", 9)
-    pdf.cell(190, 10, "Wygenerowano automatycznie z aplikacji MaksStandard.", ln=True, align="C")
+    pdf.cell(190, 10, "Wygenerowano automatycznie z aplikacji MaksStandard.", align="C")
     
-    return pdf.output()
+    try:
+        return pdf.output()
+    except TypeError:
+        return pdf.output(dest='S')
 
 # --- MENU GŁÓWNE ---
 if st.session_state.current_menu == "Główne":
@@ -159,7 +171,8 @@ elif st.session_state.current_menu == "Pracownia":
             if pd.isna(danie_nazwa) or pd.isna(skladniki_tekst):
                 continue
                 
-            with st.st.expander(f"🍔 {danie_nazwa}") if hasattr(st, 'expander') else st.expander(f"🍔 {danie_nazwa}"):
+            # Poprawiony błąd: st.expander (usunięto nieistniejące st.st)
+            with st.expander(f"🍔 {danie_nazwa}"):
                 ilosc = st.number_input(
                     f"Wpisz ilość porcji dla: {danie_nazwa}", 
                     min_value=1, value=1, step=1, key=f"input_{index}"
@@ -192,6 +205,8 @@ elif st.session_state.current_menu == "Pracownia":
                     
     except Exception as e:
         st.error("Nie udało się pobrać danych z Arkusza Google.")
+        # Wyświetla dokładny błąd, ułatwiając diagnozę w razie czego
+        st.exception(e)
 
 # --- PODMENU: KUCHNIA ---
 elif st.session_state.current_menu == "Kuchnia":
