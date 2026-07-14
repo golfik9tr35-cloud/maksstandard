@@ -11,47 +11,98 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- STYLIZACJA I ANIMOWANE TŁO ---
+# --- CHRONIONY STAN SEKCJI ---
 if 'current_menu' not in st.session_state:
     st.session_state.current_menu = "Główne"
 
-# Podstawowy styl tła (zawsze aktywny)
-bg_style = """
-<style>
-    .stApp {
-        background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%);
-        color: #ffffff;
-        overflow: hidden;
+# --- POMOCNICZE FUNKCJE (Usuwanie polskich znaków dla PDF) ---
+def clean_txt(text):
+    if not isinstance(text, str):
+        return ""
+    replacements = {
+        'ą':'a','ć':'c','ę':'e','ł':'l','ń':'n','ó':'o','ś':'s','ź':'z','ż':'z',
+        'Ą':'A','Ć':'C','Ę':'E','Ł':'L','Ń':'N','Ó':'O','Ś':'S','Ź':'Z','Ż':'Z'
     }
-    @keyframes foodRain {
-        0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
-        5% { opacity: 0.8; }
-        95% { opacity: 0.8; }
-        100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-    }
-    .food-particle {
-        position: fixed;
-        top: -15%;
-        font-size: 26px;
-        user-select: none;
-        pointer-events: none;
-        animation: foodRain 9s linear infinite;
-        animation-fill-mode: backwards;
-        z-index: 0;
-    }
-    .main-title {
-        text-align: center;
-        font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto;
-        font-weight: 800;
-        font-size: 32px;
-        margin-bottom: 30px;
-        color: #ff9f43;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-</style>
-"""
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+    return text
 
-# Spadające jedzenie aktywuje się WYŁĄCZNIE na stronie głównej
+def scale_ingredient(text, multiplier):
+    if multiplier == 1:
+        return text
+    def multiply_match(match):
+        val = float(match.group(1))
+        unit = match.group(2)
+        scaled_val = val * multiplier
+        if scaled_val.is_integer():
+            return f"{int(scaled_val)}{unit}"
+        else:
+            return f"{round(scaled_val, 2)}{unit}"
+    pattern = r"(\d+(?:\.\d+)?)\s*(g|dag|dkg|kg|szt|ml|l|plaster|plastry|lyzka|łyżka|lyzki|łyżeczka)"
+    return re.sub(pattern, multiply_match, text, flags=re.IGNORECASE)
+
+def generate_pdf(danie, porcje, skladniki_skalowane):
+    pdf = FPDF()
+    pdf.add_page()
+    
+    pdf.set_font("Helvetica", "B", 20)
+    pdf.cell(190, 10, txt="MaksStandard - Karta Produkcji", align="C")
+    pdf.ln(15)
+    
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(190, 10, txt=f"Danie: {clean_txt(danie)}")
+    pdf.ln(8)
+    pdf.cell(190, 10, txt=f"Ilosc porcji: {porcje}")
+    pdf.ln(12)
+    
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(190, 10, txt="Lista przeliczonych skladnikow:")
+    pdf.ln(8)
+    
+    pdf.set_font("Helvetica", "", 12)
+    for item in skladniki_skalowane:
+        pdf.cell(190, 8, txt=f"- {clean_txt(item)}")
+        pdf.ln(8)
+        
+    pdf.ln(15)
+    pdf.set_font("Helvetica", "I", 9)
+    pdf.cell(190, 10, txt="Wygenerowano automatycznie z aplikacji MaksStandard.", align="C")
+    
+    return bytes(pdf.output())
+
+# --- STYLIZACJA I ANIMOWANE TŁO (Bez pustych linii!) ---
+bg_style = """<style>
+.stApp {
+    background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%);
+    color: #ffffff;
+}
+@keyframes foodRain {
+    0% { transform: translateY(-20vh) rotate(0deg); opacity: 0; }
+    5% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+.food-particle {
+    position: fixed;
+    top: -15%;
+    font-size: 26px;
+    user-select: none;
+    pointer-events: none;
+    animation: foodRain 9s linear infinite;
+    animation-fill-mode: backwards;
+    z-index: 99;
+}
+.main-title {
+    text-align: center;
+    font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto;
+    font-weight: 800;
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #ff9f43;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+</style>"""
+
 if st.session_state.current_menu == "Główne":
     bg_style += """
     <div class="food-particle" style="left: 5%; animation-delay: 0s; animation-duration: 7s;">🍔</div>
@@ -77,62 +128,6 @@ LINK_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQM0vjCm1BiSiMejP38y
 def go_back():
     st.session_state.current_menu = "Główne"
     st.rerun()
-
-# Funkcja przeliczająca ilości w przepisie
-def scale_ingredient(text, multiplier):
-    if multiplier == 1:
-        return text
-    def multiply_match(match):
-        val = float(match.group(1))
-        unit = match.group(2)
-        scaled_val = val * multiplier
-        if scaled_val.is_integer():
-            return f"{int(scaled_val)}{unit}"
-        else:
-            return f"{round(scaled_val, 2)}{unit}"
-    pattern = r"(\d+(?:\.\d+)?)\s*(g|dag|dkg|kg|szt|ml|l|plaster|plastry|lyzka|łyżka|lyzki|łyżeczka)"
-    return re.sub(pattern, multiply_match, text, flags=re.IGNORECASE)
-
-# Generator PDF kompatybilny ze wszystkimi wersjami fpdf/fpdf2
-def generate_pdf(danie, porcje, skladniki_skalowane):
-    pdf = FPDF()
-    pdf.add_page()
-    
-    pdf.set_font("Helvetica", "B", 20)
-    pdf.cell(190, 10, "MaksStandard - Karta Produkcji", align="C")
-    pdf.ln(15)
-    
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.cell(190, 10, f"Danie: {danie}")
-    pdf.ln(8)
-    pdf.cell(190, 10, f"Ilosc porcji: {porcje}")
-    pdf.ln(12)
-    
-    pdf.set_font("Helvetica", "B", 12)
-    pdf.cell(190, 10, "Lista przeliczonych skladnikow:")
-    pdf.ln(8)
-    
-    pdf.set_font("Helvetica", "", 12)
-    
-    def clean_txt(t):
-        replacements = {'ą':'a','ć':'c','ę':'e','ł':'l','ń':'n','ó':'o','ś':'s','ź':'z','ż':'z',
-                        'Ą':'A','Ć':'C','Ę':'E','Ł':'L','Ń':'N','Ó':'O','Ś':'S','Ź':'Z','Ż':'Z'}
-        for k, v in replacements.items():
-            t = t.replace(k, v)
-        return t
-
-    for item in skladniki_skalowane:
-        pdf.cell(190, 8, f"- {clean_txt(item)}")
-        pdf.ln(8)
-        
-    pdf.ln(15)
-    pdf.set_font("Helvetica", "I", 9)
-    pdf.cell(190, 10, "Wygenerowano automatycznie z aplikacji MaksStandard.", align="C")
-    
-    try:
-        return pdf.output()
-    except TypeError:
-        return pdf.output(dest='S')
 
 # --- MENU GŁÓWNE ---
 if st.session_state.current_menu == "Główne":
@@ -171,7 +166,7 @@ elif st.session_state.current_menu == "Pracownia":
             if pd.isna(danie_nazwa) or pd.isna(skladniki_tekst):
                 continue
                 
-            # Poprawiony błąd: st.expander (usunięto nieistniejące st.st)
+            # Naprawione st.expander
             with st.expander(f"🍔 {danie_nazwa}"):
                 ilosc = st.number_input(
                     f"Wpisz ilość porcji dla: {danie_nazwa}", 
@@ -191,21 +186,22 @@ elif st.session_state.current_menu == "Pracownia":
                         skladniki_skalowane.append(scaled_item)
                         st.write(f"- {scaled_item}")
                 
+                # Bezpieczne generowanie PDF
                 try:
                     pdf_data = generate_pdf(danie_nazwa, ilosc, skladniki_skalowane)
                     st.download_button(
                         label="🖨️ Pobierz PDF do druku",
-                        data=bytes(pdf_data),
-                        file_name=f"Standard_{danie_nazwa.replace(' ', '_')}_{ilosc}_porcji.pdf",
+                        data=pdf_data,
+                        file_name=f"Standard_{clean_txt(danie_nazwa).replace(' ', '_')}_{ilosc}_porcji.pdf",
                         mime="application/pdf",
                         key=f"pdf_{index}"
                     )
                 except Exception as pdf_err:
                     st.warning("Nie udało się przygotować pliku PDF.")
+                    st.info(f"Szczegóły błędu: {pdf_err}")
                     
     except Exception as e:
         st.error("Nie udało się pobrać danych z Arkusza Google.")
-        # Wyświetla dokładny błąd, ułatwiając diagnozę w razie czego
         st.exception(e)
 
 # --- PODMENU: KUCHNIA ---
