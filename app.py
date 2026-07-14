@@ -72,7 +72,7 @@ def generate_pdf(danie, porcje, skladniki_skalowane):
     
     return bytes(pdf.output())
 
-# --- DESZCZ JEDZENIA (generowany losowo dla wiekszej gleboko/roznorodnosci) ---
+# --- DESZCZ JEDZENIA (generowany losowo dla wiekszej roznorodnosci) ---
 FOOD_EMOJIS = ["🍔", "🍕", "🍣", "🥪", "🌭", "🍟", "🍩", "🍦", "🍪", "🥤", "🧁", "🍿", "🥗", "🍗", "🍫"]
 
 def generate_food_rain(n=18):
@@ -99,6 +99,13 @@ background: linear-gradient(135deg, #1e1e24 0%, #2a2a35 100%) !important;
 color: #ffffff !important;
 }
 
+/* --- UKRYCIE LOGO, STOPKI I MENU DEWELOPERSKIEGO STREAMLIT --- */
+#MainMenu {visibility: hidden !important;}
+footer {visibility: hidden !important;}
+header {visibility: hidden !important;}
+div[data-testid="stHeader"] {display: none !important;}
+
+/* Animacja spadającego jedzenia */
 @keyframes foodRain {
 0%   { transform: translateY(-20vh) translateX(0px) rotate(0deg) scale(0.85); opacity: 0; }
 10%  { opacity: var(--p-opacity, 0.25); }
@@ -156,11 +163,22 @@ div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:hover {
     border-color: rgba(255, 255, 255, 0.35) !important;
     color: #ffffff !important;
 }
-div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active {
-    background: rgba(255, 255, 255, 0.26) !important;
-    transform: scale(0.97) !important;
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:active,
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:focus {
+    background: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button p {
+    color: #ffffff !important;
+}
+
+/* Zapobieganie zmianie koloru na biały po kliknięciu poza przycisk */
+div[data-testid="stAppViewContainer"] div[data-testid="stButton"] button:focus:not(:active) {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
 }
 
@@ -179,6 +197,7 @@ div[data-testid="stExpander"] > details > summary {
     color: #ffffff !important;
     transition: background 0.2s ease !important;
     padding: 12px 16px !important;
+    outline: none !important;
 }
 /* Efekty hover / focus / active dla nagłówka expandera */
 div[data-testid="stExpander"] > details > summary:hover {
@@ -186,7 +205,7 @@ div[data-testid="stExpander"] > details > summary:hover {
 }
 div[data-testid="stExpander"] > details > summary:focus,
 div[data-testid="stExpander"] > details > summary:active {
-    background: rgba(255, 255, 255, 0.18) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
     color: #ffffff !important;
 }
 div[data-testid="stExpander"] > details > summary p {
@@ -271,7 +290,7 @@ if st.session_state.current_menu == "Główne":
         if st.button("📦\n\nMagazyn\n\nStrefa chroniona", use_container_width=True, key="btn_magazyn"):
             st.session_state.current_menu = "Magazyn"
             st.rerun()
-        if st.button("👔\n\nZarząd\n\nPanel Zarządu", use_container_width=True, key="btn_zarzad"):
+        if st.button("👔\n\nZarząd\n\nPanel zarządzania", use_container_width=True, key="btn_zarzad"):
             st.session_state.current_menu = "Zarząd"
             st.rerun()
 
